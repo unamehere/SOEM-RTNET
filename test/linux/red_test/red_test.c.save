@@ -59,34 +59,8 @@ void redtest(char *ifname, char *ifname2)
    {
       printf("ec_init on %s succeeded.\n",ifname);
       /* find and auto-config slaves */
-      if ( ec_config_init(FALSE) > 0 )
+      if ( ec_config(FALSE, &IOmap) > 0 )
       {
-         for (int slave = 1; slave <= ec_slavecount; slave++)
-         {
-            //0x1605 :  Target Position             32bit
-            //          Target Velocity             32bit
-            //          Max Torque                  16bit
-            //          Control word                16bit
-            //          Modes of Operation          16bit
-            uint16 map_1c12[2] = {0x0001, 0x1605};
-
-            //0x1a00 :  position actual value       32bit
-            //          Digital Inputs              32bit
-            //          Status word                 16bit
-            //0x1a11 :  velocity actual value       32bit
-            //0x1a13 :  Torque actual value         16bit
-            //0x1a1e :  Auxiliary position value    32bit
-            uint16 map_1c13[5] = {0x0004, 0x1a00, 0x1a11, 0x1a13, 0x1a1e}; //, 0x1a12};
-            //uint16 map_1c13[6] = {0x0005, 0x1a04, 0x1a11, 0x1a12, 0x1a1e, 0X1a1c};
-            int os;
-            os = sizeof(map_1c12);
-            ec_SDOwrite(slave, 0x1c12, 0, TRUE, os, map_1c12, EC_TIMEOUTRXM);
-            os = sizeof(map_1c13);
-            ec_SDOwrite(slave, 0x1c13, 0, TRUE, os, map_1c13, EC_TIMEOUTRXM);
-         }
-         /** if CA disable => automapping works */
-         printf("ELMO %d : config init\n", 1);
-         ec_config_map(&IOmap);
          printf("%d slaves found and configured.\n",ec_slavecount);
          /* wait for all slaves to reach SAFE_OP state */
          ec_statecheck(0, EC_STATE_SAFE_OP,  EC_TIMEOUTSTATE);
