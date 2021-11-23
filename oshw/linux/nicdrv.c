@@ -144,30 +144,45 @@ int ecx_setupnic(ecx_portt *port, const char *ifname, int secondary)
       psock = &(port->sockhandle);
    }
    /* we use RAW packet socket, with packet type ETH_P_ECAT */
-   *psock = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ECAT));
+   *psock = socket(PF_PACKET, SOCK_RAW , htons(ETH_P_ECAT));
 
    if (*psock < 0)
+   {
       printf("Failed to create socket: %s\n", strerror(-(*psock)));
+   }
+   else
+   {
+      printf("Success to create socket : SOCK_NONBLOCK\n");
+   }
    /* connect socket to NIC by name */
    strcpy(ifr.ifr_name, ifname);
    r = ioctl(*psock, SIOCGIFINDEX, &ifr);
    if (r < 0)
    {
-      printf("getting socket index failed:%d, %s\n", r, strerror(-r));
+      printf("setting SIOCGIFINDEX socket index failed:%d, %s\n", r, strerror(-r));
    }
    timeout.tv_sec = 0;
-   timeout.tv_usec = 1;
+   timeout.tv_usec = -1;
 
-   r = ioctl(*psock, RTNET_RTIOC_TIMEOUT, &timeout);
+   /* RTNET 
+   r = setsockopt(*psock, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
    if (r < 0)
    {
-      printf("getting socket index failed:%d, %s\n", r, strerror(-r));
+      printf("setting SO_RCVTIMEO socket index failed:%d, %s\n", r, strerror(-r));
    }
 
-   // r = setsockopt(*psock, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
-   // r = setsockopt(*psock, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
-   // i = 1;
-   // r = setsockopt(*psock, SOL_SOCKET, SO_DONTROUTE, &i, sizeof(i));
+   r = setsockopt(*psock, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
+   if (r < 0)
+   {
+      printf("setting SO_SNDTIMEO socket index failed:%d, %s\n", r, strerror(-r));
+   }
+   i = 1;
+   r = setsockopt(*psock, SOL_SOCKET, SO_DONTROUTE, &i, sizeof(i));
+   if (r < 0)
+   {
+      printf("setting SO_DONTROUTE socket index failed:%d, %s\n", r, strerror(-r));
+   }
+   */
    ifindex = ifr.ifr_ifindex;
    strcpy(ifr.ifr_name, ifname);
    ifr.ifr_flags = 0;
@@ -175,19 +190,34 @@ int ecx_setupnic(ecx_portt *port, const char *ifname, int secondary)
    r = ioctl(*psock, SIOCGIFFLAGS, &ifr);
    if (r < 0)
    {
-      printf("resetting socket flags failed:%d, %s\n", r, strerror(-r));
+      printf("resetting socket flags SIOCGIFFLAGS failed:%d, %s\n", r, strerror(-r));
    }
    else
    {
-      printf("resetting socket flags success \n");
+      printf("resetting socket flags SIOCGIFFLAGS success \n");
    }
+
    /* set flags of NIC interface, here promiscuous and broadcast */
-   ifr.ifr_flags = ifr.ifr_flags | IFF_PROMISC | IFF_BROADCAST;
+   //ifr.ifr_flags = ifr.ifr_flags | IFF_PROMISC | IFF_BROADCAST;
+   ifr.ifr_flags = ifr.ifr_flags;//| IFF_PROMISC | IFF_BROADCAST;
    r = ioctl(*psock, SIOCSIFFLAGS, &ifr);
    if (r < 0)
    {
-      printf("setting socket flags failed:%d, %s\n", r, strerror(-r));
+      printf("setting socket flags SIOCSIFFLAGS failed:%d, %s\n", r, strerror(-r));
    }
+   
+   int64_t rt_timeout = 1000;
+
+   r = ioctl(*psock, RTNET_RTIOC_TIMEOUT, &rt_timeout);
+   if (r < 0)
+   {
+      printf("setting RTNET_RTIOC_TIMEOUT timeout with int64_t -1 socket index failed:%d, %s\n", r, strerror(-r));
+   }
+   else{
+      printf("setting RTNET_RTIOC_TIMEOUT timeout with int64_t -1 socket index success \n");
+
+   }
+   
    /* bind socket to protocol, in this case RAW EtherCAT */
    sll.sll_family = AF_PACKET;
    sll.sll_ifindex = ifindex;
