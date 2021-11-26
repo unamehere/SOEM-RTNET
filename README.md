@@ -11,12 +11,12 @@ Linux 5.4.124, Xenomai-3.1.1.
 Tested With Humanoid Robot [TOCABI](https://github.com/saga0619/dyros_tocabi_v2)
 
 Tested Master PC : 
-CPU : i7-10700
-M/B : Gigabyte H470i
-NIC : Intel I340-T4 ( 4 Port PCI NIC )
+- CPU : i7-10700
+- M/B : Gigabyte H470i
+- NIC : Intel I340-T4 ( 4 Port PCI NIC )
 
-Slave : ELMO GOLD WHISTLE
-18 slaves Redundant (2 Port) + 15 slaves Redundant (2 Port)
+- Slave : ELMO GOLD WHISTLE
+- 18 slaves Redundant (2 Port) + 15 slaves Redundant (2 Port)
 
 System Stability Test with 10+ Hours with 2Khz with 1 Timeout. 
 
