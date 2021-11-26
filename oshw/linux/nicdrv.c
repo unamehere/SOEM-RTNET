@@ -152,7 +152,7 @@ int ecx_setupnic(ecx_portt *port, const char *ifname, int secondary)
    }
    else
    {
-      printf("Success to create socket : SOCK_NONBLOCK\n");
+      // printf("Success to create socket : SOCK_NONBLOCK\n");
    }
    /* connect socket to NIC by name */
    strcpy(ifr.ifr_name, ifname);
@@ -194,17 +194,17 @@ int ecx_setupnic(ecx_portt *port, const char *ifname, int secondary)
    }
    else
    {
-      printf("resetting socket flags SIOCGIFFLAGS success \n");
+      // printf("resetting socket flags SIOCGIFFLAGS success \n");
    }
 
    /* set flags of NIC interface, here promiscuous and broadcast */
    //ifr.ifr_flags = ifr.ifr_flags | IFF_PROMISC | IFF_BROADCAST;
    ifr.ifr_flags = ifr.ifr_flags;//| IFF_PROMISC | IFF_BROADCAST;
-   r = ioctl(*psock, SIOCSIFFLAGS, &ifr);
-   if (r < 0)
-   {
-      printf("setting socket flags SIOCSIFFLAGS failed:%d, %s\n", r, strerror(-r));
-   }
+   // r = ioctl(*psock, SIOCSIFFLAGS, &ifr);
+   // if (r < 0)
+   // {
+   //    printf("setting socket flags SIOCSIFFLAGS failed:%d, %s\n", r, strerror(-r));
+   // }
    
    int64_t rt_timeout = 1000;
 
@@ -214,7 +214,7 @@ int ecx_setupnic(ecx_portt *port, const char *ifname, int secondary)
       printf("setting RTNET_RTIOC_TIMEOUT timeout with int64_t -1 socket index failed:%d, %s\n", r, strerror(-r));
    }
    else{
-      printf("setting RTNET_RTIOC_TIMEOUT timeout with int64_t -1 socket index success \n");
+      // printf("setting RTNET_RTIOC_TIMEOUT timeout with int64_t -1 socket index success \n");
 
    }
    

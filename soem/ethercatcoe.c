@@ -132,7 +132,7 @@ int ecx_SDOread(ecx_contextt *context, uint16 slave, uint16 index, uint8 subinde
 
    ec_clearmbx(&MbxIn);
    /* Empty slave out mailbox if something is in. Timeout set to 0 */
-   wkc = ecx_mbxreceive(context, slave, (ec_mbxbuft *)&MbxIn, 0);
+   wkc = ecx_mbxreceive(context, slave, (ec_mbxbuft *)&MbxIn, 1);
    ec_clearmbx(&MbxOut);
    aSDOp = (ec_SDOt *)&MbxIn;
    SDOp = (ec_SDOt *)&MbxOut;
@@ -809,6 +809,7 @@ uint32 ecx_readPDOassignCA(ecx_contextt *context, uint16 Slave, int Thread_n,
  */
 int ecx_readPDOmap(ecx_contextt *context, uint16 Slave, uint32 *Osize, uint32 *Isize)
 {
+   EC_PRINT("ecx read pdo 0\n");
    int wkc, rdl;
    int retVal = 0;
    uint8 nSM, iSM, tSM;
@@ -821,6 +822,7 @@ int ecx_readPDOmap(ecx_contextt *context, uint16 Slave, uint32 *Osize, uint32 *I
    rdl = sizeof(nSM); nSM = 0;
    /* read SyncManager Communication Type object count */
    wkc = ecx_SDOread(context, Slave, ECT_SDO_SMCOMMTYPE, 0x00, FALSE, &rdl, &nSM, EC_TIMEOUTRXM);
+   EC_PRINT("ecx read pdo 1\n");
    /* positive result from slave ? */
    if ((wkc > 0) && (nSM > 2))
    {
@@ -833,6 +835,7 @@ int ecx_readPDOmap(ecx_contextt *context, uint16 Slave, uint32 *Osize, uint32 *I
          rdl = sizeof(tSM); tSM = 0;
          /* read SyncManager Communication Type */
          wkc = ecx_SDOread(context, Slave, ECT_SDO_SMCOMMTYPE, iSM + 1, FALSE, &rdl, &tSM, EC_TIMEOUTRXM);
+   EC_PRINT("ecx read pdo 3\n");
          if (wkc > 0)
          {
 // start slave bug prevention code, remove if possible

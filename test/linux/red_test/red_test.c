@@ -20,7 +20,6 @@
 #include <time.h>
 #include <pthread.h>
 #include <math.h>
-#include <inttypes.h>
 
 #include "ethercat.h"
 
@@ -53,40 +52,13 @@ void redtest(char *ifname, char *ifname2)
    printf("Starting Redundant test\n");
 
    /* initialise SOEM, bind socket to ifname */
-   (void) ifname2;
-   if (ec_init_redundant(ifname, ifname2))
-//   if (ec_init(ifname))
+//   if (ec_init_redundant(ifname, ifname2))
+   if (ec_init(ifname))
    {
       printf("ec_init on %s succeeded.\n",ifname);
       /* find and auto-config slaves */
-      if ( ec_config_init(FALSE) > 0 )
+      if ( ec_config(FALSE, &IOmap) > 0 )
       {
-         for (int slave = 1; slave <= ec_slavecount; slave++)
-         {
-            //0x1605 :  Target Position             32bit
-            //          Target Velocity             32bit
-            //          Max Torque                  16bit
-            //          Control word                16bit
-            //          Modes of Operation          16bit
-            uint16 map_1c12[2] = {0x0001, 0x1605};
-
-            //0x1a00 :  position actual value       32bit
-            //          Digital Inputs              32bit
-            //          Status word                 16bit
-            //0x1a11 :  velocity actual value       32bit
-            //0x1a13 :  Torque actual value         16bit
-            //0x1a1e :  Auxiliary position value    32bit
-            uint16 map_1c13[5] = {0x0004, 0x1a00, 0x1a11, 0x1a13, 0x1a1e}; //, 0x1a12};
-            //uint16 map_1c13[6] = {0x0005, 0x1a04, 0x1a11, 0x1a12, 0x1a1e, 0X1a1c};
-            int os;
-            os = sizeof(map_1c12);
-            ec_SDOwrite(slave, 0x1c12, 0, TRUE, os, map_1c12, EC_TIMEOUTRXM);
-            os = sizeof(map_1c13);
-            ec_SDOwrite(slave, 0x1c13, 0, TRUE, os, map_1c13, EC_TIMEOUTRXM);
-         }
-         /** if CA disable => automapping works */
-         printf("ELMO %d : config init\n", 1);
-         ec_config_map(&IOmap);
          printf("%d slaves found and configured.\n",ec_slavecount);
          /* wait for all slaves to reach SAFE_OP state */
          ec_statecheck(0, EC_STATE_SAFE_OP,  EC_TIMEOUTSTATE);
@@ -101,8 +73,8 @@ void redtest(char *ifname, char *ifname2)
             printf("Slave:%d Name:%s Output size:%3dbits Input size:%3dbits State:%2d delay:%d.%d\n",
                   cnt, ec_slave[cnt].name, ec_slave[cnt].Obits, ec_slave[cnt].Ibits,
                   ec_slave[cnt].state, (int)ec_slave[cnt].pdelay, ec_slave[cnt].hasdc);
-            printf("         Out:%p,%4d In:%p,%4d\n",
-                  ec_slave[cnt].outputs, ec_slave[cnt].Obytes, ec_slave[cnt].inputs, ec_slave[cnt].Ibytes);
+            printf("         Out:%8.8x,%4d In:%8.8x,%4d\n",
+                  (int)ec_slave[cnt].outputs, ec_slave[cnt].Obytes, (int)ec_slave[cnt].inputs, ec_slave[cnt].Ibytes);
             /* check for EL2004 or EL2008 */
             if( !digout && ((ec_slave[cnt].eep_id == 0x0af83052) || (ec_slave[cnt].eep_id == 0x07d83052)))
             {
@@ -131,9 +103,9 @@ void redtest(char *ifname, char *ifname2)
             printf("Operational state reached for all slaves.\n");
             inOP = TRUE;
             /* acyclic loop 5000 x 20ms = 10s */
-            for(i = 1; 1; i++)
+            for(i = 1; i <= 5000; i++)
             {
-               printf("Processdata cycle %5d , Wck %3d, DCtime %12"PRId64", dt %12"PRId64", O:",
+               printf("Processdata cycle %5d , Wck %3d, DCtime %12lld, dt %12lld, O:",
                   dorun, wkc , ec_DCtime, gl_delta);
                for(j = 0 ; j < oloop; j++)
                {
@@ -192,7 +164,7 @@ void add_timespec(struct timespec *ts, int64 addtime)
    sec = (addtime - nsec) / NSEC_PER_SEC;
    ts->tv_sec += sec;
    ts->tv_nsec += nsec;
-   if ( ts->tv_nsec >= NSEC_PER_SEC )
+   if ( ts->tv_nsec > NSEC_PER_SEC )
    {
       nsec = ts->tv_nsec % NSEC_PER_SEC;
       ts->tv_sec += (ts->tv_nsec - nsec) / NSEC_PER_SEC;
@@ -224,10 +196,6 @@ OSAL_THREAD_FUNC_RT ecatthread(void *ptr)
    clock_gettime(CLOCK_MONOTONIC, &ts);
    ht = (ts.tv_nsec / 1000000) + 1; /* round to nearest ms */
    ts.tv_nsec = ht * 1000000;
-   if (ts.tv_nsec >= NSEC_PER_SEC) {
-      ts.tv_sec++;
-      ts.tv_nsec -= NSEC_PER_SEC;
-   }
    cycletime = *(int*)ptr * 1000; /* cycletime in ns */
    toff = 0;
    dorun = 0;
@@ -259,8 +227,6 @@ OSAL_THREAD_FUNC_RT ecatthread(void *ptr)
 OSAL_THREAD_FUNC ecatcheck( void *ptr )
 {
     int slave;
-
-    (void) ptr;
 
     while(1)
     {
