@@ -2,7 +2,7 @@
 [![Build Status](https://github.com/OpenEtherCATsociety/SOEM/workflows/build/badge.svg?branch=master)](https://github.com/OpenEtherCATsociety/SOEM/actions?workflow=build)
 
 
-SOEM with RTNET
+# RTNET SOEM
 
 Test Configuration 
 Ubuntu 20.04
@@ -24,9 +24,23 @@ System Stability Test with 10+ Hours with 2Khz with 1 Timeout.
 
 How to Use RTNET with SOEM?
 
--
--
--
+You need to make your own Shell script files to start rtnet.
+
+You can check example rtnet shell script at rtnet_script folder.
+
+On example shell script, It contains, 
+
+- load rtpacket kernel module with modprobe.
+- unbind non-rt driver of nic, and bind rt driver.
+- activate rt nic with rtifconfig.
+
+other rtnet modules are not essential.
+
+you may test rtnet-soem with red_test!
+
+* ./red_test rteth0 rteth1 500
+
+
 
 
 
@@ -39,28 +53,13 @@ Prerequisites for all platforms
 
  * CMake 3.9 or later
 
-
-Windows (Visual Studio)
------------------------
-
- * Start a Visual Studio command prompt then:
-   * `mkdir build`
-   * `cd build`
-   * `cmake .. -G "NMake Makefiles"`
-   * `nmake`
-
-Linux & macOS
---------------
+Linux (XENOMAI)
+-----
 
    * `mkdir build`
    * `cd build`
    * `cmake ..`
    * `make`
-
-ERIKA Enterprise RTOS
----------------------
-
- * Refer to http://www.erika-enterprise.com/wiki/index.php?title=EtherCAT_Master
 
 Documentation
 -------------
