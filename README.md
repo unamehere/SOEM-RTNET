@@ -56,22 +56,15 @@ You can find our robot's RTNET-SOEM ethercat communication codes in here [Tocabi
 
 
 
-
-====================================================================================================
-Below README.md is Original version of SOEM
-
-
-
-
 BUILDING
 ========
 
-Prerequisites for all platforms
+Prerequisites
 -------------------------------
 
  * CMake 3.9 or later
 
-Linux (XENOMAI)
+Linux (XENOMAI ONLY!)
 -----
 
    * `mkdir build`
