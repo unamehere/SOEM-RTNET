@@ -34,13 +34,26 @@ On example shell script, It contains,
 - unbind non-rt driver of nic, and bind rt driver.
 - activate rt nic with rtifconfig.
 
-other rtnet modules are not essential.
+other rtnet modules like rtcap, rtudp... rt.... are not essential.
 
-you may test rtnet-soem with red_test!
+you can test rtnet-soem with red_test!
+
+red_test is build default with SOEM.
 
 * ./red_test rteth0 rteth1 500
 
+PROGRAMMING
+===========
+It is recommended to place rt-specific code(like communication codes of soem) in real-time thread!
+Only ec_init or ec_init_redundant must be placed in main thread! 
+When the ec_init or ec_init_redundant codes are in the real-time thread, the initialization process of ethercat communication does not proceed successfully.
+Other communication codes except ec_init, ec_init_redundant must be placed on real-time thread. 
 
+You can find our robot's RTNET-SOEM ethercat communication codes in here [Tocabi ECAT](https://github.com/saga0619/tocabi_ecat)
+
+
+====================================================================================================
+Below README.md is Original version of SOEM
 
 
 
