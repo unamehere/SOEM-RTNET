@@ -1,10 +1,19 @@
 # Simple Open EtherCAT Master Library (RTNET VERSION)
 
+
+
+
 # RTNET SOEM
 
+This Forked SOEM is rtnet patched SOEM!. RTNET specific socket configuration codes are added on SOEM.
+
+Then test with Real 33DOF humanoid robot. It's working very well with almost no timeout!.
+
+The stability test lasted for more than 20 hours(not in once), of which timeout occurred only once
+
 Test Configuration 
-Ubuntu 20.04
-Linux 5.4.124, Xenomai-3.1.1.
+- Ubuntu 20.04
+- Linux 5.4.124, Xenomai-3.1.1.
 
 Tested With Humanoid Robot [TOCABI](https://github.com/saga0619/dyros_tocabi_v2)
 
@@ -16,7 +25,6 @@ Tested Master PC :
 - Slave : ELMO GOLD WHISTLE
 - 18 slaves Redundant (2 Port) + 15 slaves Redundant (2 Port)
 
-System Stability Test with 10+ Hours with 2Khz with 1 Timeout. 
 
 
 
