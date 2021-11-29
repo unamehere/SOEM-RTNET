@@ -1,6 +1,4 @@
 # Simple Open EtherCAT Master Library (RTNET VERSION)
-[![Build Status](https://github.com/OpenEtherCATsociety/SOEM/workflows/build/badge.svg?branch=master)](https://github.com/OpenEtherCATsociety/SOEM/actions?workflow=build)
-
 
 # RTNET SOEM
 
