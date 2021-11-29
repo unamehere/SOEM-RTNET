@@ -44,6 +44,7 @@ red_test is build default with SOEM.
 
 PROGRAMMING
 ===========
+
 It is recommended to place rt-specific code(like communication codes of soem) in real-time thread!
 
 Only ec_init or ec_init_redundant must be placed in main thread! 
