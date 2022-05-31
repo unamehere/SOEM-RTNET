@@ -7,14 +7,14 @@
 # ------- Configuration  --------
 # Pci address of NIC (ex: 0000:03:00.0)
 #   Pci address can be checked with lspci
-devices="0000:03:00.0 0000:03:00.1 0000:04:00.0 0000:04:00.1"
+devices="0000:01:00.0 0000:01:00.1"
 
 # default loaded driver on the NIC.
 #   List of drivers that can be used on the NIC, can be checked with 'lspci -v' command on terminal. (ex: kernel modules : igb, rt_igb)
-driver="igb"
+driver="e1000e"
 
 # RT driver to use with the NIC (usually comes with 'rt_' letters are in front of driver name)
-rtdriver="rt_igb"
+rtdriver="rt_e1000e"
 # ------ Configuration End ------
 # -------------------------------
 
@@ -30,8 +30,8 @@ case "$1" in
             fi
 	    echo $dev bind $rtdriver
             echo -n $dev > /sys/bus/pci/drivers/$rtdriver/bind
-	    echo rtifconfig rteth$dev_num up promisc
-            rtifconfig rteth$dev_num up promisc
+	    echo /usr/xenomai/sbin/rtifconfig rteth$dev_num up promisc
+            /usr/xenomai/sbin/rtifconfig rteth$dev_num up promisc
             dev_num=$(($dev_num + 1))
         done
 	;;

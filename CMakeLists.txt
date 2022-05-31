@@ -46,7 +46,7 @@ OUTPUT_STRIP_TRAILING_WHITESPACE)
  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${XENO_LDFLAGS}")
   set(OS_LIBS pthread rt)
  # set(OS_LIBS rt)
-  #include_directories(/usr/xenomai/include /usr/xenomai/include/cobalt)
+  include_directories(/usr/xenomai/include /usr/xenomai/include/cobalt)
   #link_directories(/usr/xenomai/lib)
 elseif(APPLE)
   # This must come *before* linux or MacOSX will identify as Unix.
